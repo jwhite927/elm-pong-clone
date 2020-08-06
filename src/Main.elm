@@ -1,6 +1,89 @@
 module Main exposing (..)
 
 import Playground exposing (..)
+-- CONSTANTS
+
+ballradius : Float
+ballradius =
+    10
+
+rpaddleoffset : Float
+rpaddleoffset =
+    300
+
+paddleheight : Float
+paddleheight =
+    90
+
+paddlewidth : Float
+paddlewidth =
+    20
+
+-- TYPES
+
+-- Rectangular objects have edges, used for collisions
+type alias Edges =
+    { right : Float
+    , left : Float
+    , top : Float
+    , bottom : Float
+    }
+
+-- Side describes which side of the screen we're on
+type Side
+    = Left
+    | Right
+
+makeEdges : Float -> Float -> Float -> Float -> Edges
+makeEdges x y dx dy =
+    Edges (x + dx) (x - dx) (y + dy) (y - dy)
+
+
+-- The ball is square and has the most movement logic
+type alias Ball =
+    { x : Float
+    , y : Float
+    , vx : Float
+    , vy : Float
+    , edges : Edges
+    }
+
+newBall : Float -> Float -> Float -> Float -> Ball
+newBall x y vx vy =
+    Ball x y vx vy (makeEdges x y ballradius ballradius)
+
+moveBall : Ball -> Float -> Float -> Ball
+moveBall ball bvx bvy =
+    newBall (ball.x + bvx) (ball.y + bvy) bvx bvy
+
+
+-- Paddles have a fixed x and only move in y
+type alias Paddle =
+    { x: Float
+    , y : Float
+    , edges : Edges
+    }
+
+initPaddle side =
+    case side of
+    Left ->
+        Paddle (negate rpaddleoffset) 0 (makeEdges (negate rpaddleoffset) 0 (paddlewidth / 2) (paddleheight / 2)
+    Right ->
+        Paddle rpaddleoffset 0 (makeEdges rpaddleoffset 0 (paddlewidth / 2) (paddleheight / 2)
+
+-- State holds the entire game state
+type alias State =
+    { paddle1 : Paddle
+    , paddle2 : Paddle
+    , ball : Ball
+    }
+
+initState : State
+initState =
+    -- State (initPaddle Left) (initPaddle Right) (newBall 0 0 -3 0)
+    State (initPaddle Left) (initPaddle Right) (newBall 0 0 -3 0)
+
+
 
 -- UPDATE
 
@@ -8,52 +91,47 @@ update : Computer -> State -> State
 update computer memory =
 
     let
-        vy = 10 * toY computer.keyboard
-        y = memory.p1.y + vy
+        y = memory.paddle1.y +  (computer.screen.height / 80) * toY computer.keyboard
         bvx = if hittingPaddle memory (whichSide memory) then
                 case whichSide memory of
                     Left -> 3
                     Right -> -3
-              else memory.bvx
-        bvy = if hittingTorB computer memory.by then negate memory.bvy else memory.bvy
-        p1 = memory.p1
+              else memory.ball.vx
+        bvy = if hittingTorB computer memory.ball then negate memory.ball.vy else memory.ball.vy
+        paddle1 = memory.paddle1
+        ball = memory.ball
     in
         { memory
-        | p1 = { p1  | y = (max computer.screen.bottom y), vy = vy }
-        , bx = memory.bx + bvx
-        , by = memory.by + bvy
-        , bvx = bvx
-        , bvy = bvy
+        | paddle1 = { paddle1  | y = (max computer.screen.bottom y) }
+        , ball = moveBall ball bvx bvy
         }
 
-
-hittingTorB computer ballY =
-    ballY + 10 > computer.screen.top
-    || ballY - 10 < computer.screen.bottom
+hittingTorB : Computer -> Ball -> Bool
+hittingTorB computer ball =
+    ball.edges.top > computer.screen.top
+    || ball.edges.bottom < computer.screen.bottom
 
 timeToCheck memory side =
     case side of
         Left  ->
-            memory.bx < memory.p1.x + 20
+            memory.ball.edges.left < memory.paddle1.x + 10
+            && memory.ball.edges.left > memory.paddle1.x
         Right ->
-            memory.bx > memory.p2.x - 20
-
-type Side
-    = Left
-    | Right
+            memory.ball.edges.right > memory.paddle2.x - 10
+            && memory.ball.edges.right < memory.paddle2.x
 
 whichSide memory =
-    if memory.bx < 0 then Left else Right
+    if memory.ball.x < 0 then Left else Right
 
 hittingPaddle memory side =
     timeToCheck memory side
     && case side of
        Left ->
-           memory.by - 10 < memory.p1.y + 45
-           && memory.by + 10 > memory.p1.y - 45
+           memory.ball.edges.left < memory.paddle1.y + 45
+           && memory.ball.y+ 10 > memory.paddle1.y - 45
        Right ->
-           memory.by - 10 < memory.p2.y + 45
-           && memory.by + 10 > memory.p2.y - 45
+           memory.ball.y- 10 < memory.paddle2.y + 45
+           && memory.ball.y+ 10 > memory.paddle2.y - 45
 
 -- VIEW
 
@@ -65,39 +143,14 @@ view computer memory =
     in
         [ rectangle (rgb 0 0 0) w h
         , rectangle (rgb 250 250 250) 20 90
-            |> move memory.p1.x memory.p1.y
+            |> move memory.paddle1.x memory.paddle1.y
         , rectangle (rgb 250 250 250) 20 90
-            |> move memory.p2.x memory.p2.y
-        , square (rgb 250 250 250) 20
-            |> move memory.bx memory.by
+            |> move memory.paddle2.x memory.paddle2.y
+        , square (rgb 250 250 250) (ballradius * 2)
+            |> move memory.ball.x memory.ball.y
          ]
 
 -- MAIN
-
-type alias Paddle =
-    { x: Float
-    , y : Float
-    , vy: Float
-    }
-
-initLeftPaddle =
-    Paddle -300 0 0
-
-initRightPaddle =
-    Paddle 300 0 0
-
-type alias State =
-    { p1 : Paddle
-    , p2 : Paddle
-    , bx : Float
-    , by : Float
-    , bvx : Float
-    , bvy : Float
-    }
-
-initState : State
-initState =
-    State initLeftPaddle initRightPaddle 0 0 -3 0
 
 main =
     game view update initState
