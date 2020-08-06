@@ -169,7 +169,7 @@ update computer memory =
 
         Nothing ->
             let
-                y =
+                p1y =
                     memory.paddle1.y + (computer.screen.height / 80) * toY computer.keyboard
 
                 bvx =
@@ -199,21 +199,32 @@ update computer memory =
 
                 boundary =
                     fieldSize computer / 2
+
+                p2y =
+                    if memory.ball.vx < 0 then
+                        follow memory.paddle2 0 (computer.screen.height / 400)
+                    else
+                        follow memory.paddle2 memory.ball.y (computer.screen.height / 400)
+
+
+
             in
             { memory
                 | paddle1 =
-                    makePaddle Left
-                        (if paddle1.edges.top > (fieldSize computer / 2) then
-                            boundary - paddleheight / 2
-
-                         else if paddle1.edges.bottom < negate (fieldSize computer / 2) then
-                            negate boundary + paddleheight / 2
-
-                         else
-                            y
-                        )
+                    makePaddle Left (boundPaddle memory.paddle1 boundary p1y)
+                , paddle2 =
+                    makePaddle Right (boundPaddle memory.paddle2 boundary p2y)
                 , ball = moveBall ball bvx bvy
             }
+
+follow paddle target vx =
+        if target < paddle.y then
+            paddle.y - vx
+        else if target == paddle.y then
+            paddle.y
+        else
+            paddle.y + vx
+        
 
 
 hittingTorB : Computer -> Ball -> Bool
