@@ -217,6 +217,17 @@ update computer memory =
                 , ball = moveBall ball bvx bvy
             }
 
+boundPaddle paddle boundary y =
+    if paddle.edges.top > boundary then
+        boundary - paddleheight / 2
+
+    else if paddle.edges.bottom < negate boundary then
+        negate boundary + paddleheight / 2
+
+    else
+        y
+    
+
 follow paddle target vx =
         if target < paddle.y then
             paddle.y - vx
