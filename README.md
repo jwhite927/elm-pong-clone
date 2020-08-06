@@ -11,3 +11,19 @@ It utilizes the [Elm-playground](https://package.elm-lang.org/packages/evancz/el
 * Scoring
 * Animation
 * Keyboard Controls
+ 
+## Usage
+
+Try the game locally with:
+```
+elm reactor
+```
+
+or build an index.html with:
+```
+elm make src/Main.elm
+```
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
