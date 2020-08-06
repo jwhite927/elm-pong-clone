@@ -298,7 +298,7 @@ hittingPaddle memory side =
 
 
 fieldSize computer =
-    min computer.screen.width computer.screen.height * 0.8
+    (min computer.screen.width computer.screen.height) * 0.8
 
 
 view : Computer -> State -> List Shape
@@ -311,21 +311,24 @@ view computer memory =
             computer.screen.height
 
         rightScoreX =
-            computer.screen.width * (1 / 8)
+            (fieldSize computer) / 4
 
         scoreY =
-            computer.screen.height * (7 / 16)
+            ((fieldSize computer) / 2) - 60
+
+        field =
+            fieldSize computer
     in
     [ rectangle (rgb 68 68 68) w h
-    , square black (fieldSize computer)
+    , square black field
     , rectangle white paddlewidth paddleheight
         |> move memory.paddle1.x memory.paddle1.y
     , rectangle white paddlewidth paddleheight
         |> move memory.paddle2.x memory.paddle2.y
     , square white (ballradius * 2)
         |> move memory.ball.x memory.ball.y
-    , rectangle white 5 70
-        |> move 0 scoreY
+    , rectangle white 2 field
+        |> move 0 0
     , words white (toString memory.score.player1score)
         |> scale 4
         |> move (negate rightScoreX) scoreY
