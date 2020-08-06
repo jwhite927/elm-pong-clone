@@ -12,6 +12,9 @@ ballradius : Float
 ballradius =
     10
 
+ballSpeed: Float
+ballSpeed =
+    6
 
 rpaddleoffset : Float
 rpaddleoffset =
@@ -128,16 +131,12 @@ initScore =
 
 initState : State
 initState =
-    State (makePaddle Left 0) (makePaddle Right 0) (newBall 0 0 3 3) initScore
-
-
-
--- State (makePaddle Left 0) (makePaddle Right 0) (newBall 0 0 -3 0) initScore
+    State (makePaddle Left 0) (makePaddle Right 0) (newBall 0 0 ballSpeed 3) initScore
 
 
 resetState : Score -> State
 resetState score =
-    State (makePaddle Left 0) (makePaddle Right 0) (newBall 0 0 -3 3) score
+    State (makePaddle Left 0) (makePaddle Right 0) (newBall 0 0 ballSpeed 3) score
 
 
 
@@ -177,10 +176,10 @@ update computer memory =
                     if hittingPaddle memory (whichSide memory) then
                         case whichSide memory of
                             Left ->
-                                3
+                                ballSpeed
 
                             Right ->
-                                -3
+                                negate ballSpeed
 
                     else
                         memory.ball.vx
