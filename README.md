@@ -23,6 +23,7 @@ or build an index.html with:
 ```
 elm make src/Main.elm
 ```
+and open in a browser.
 
 ## License
 
