@@ -57,7 +57,10 @@ type Side
     = Left
     | Right
 
+-- Scoring helps direct which player scored, if any
 
+type Scoring
+    = Maybe Side
 
 -- The ball is square and has the most movement logic
 
@@ -111,9 +114,12 @@ type alias Score =
     , player2score : Float
     }
 
+initScore : Score
+initScore =
+    Score 0 0
 
 
--- State hold all the game memory
+-- State holds the game memory
 
 
 type alias State =
@@ -122,11 +128,6 @@ type alias State =
     , ball : Ball
     , score : Score
     }
-
-
-initScore : Score
-initScore =
-    Score 0 0
 
 
 initState : State
@@ -143,8 +144,7 @@ resetState score =
 -- UPDATE
 
 
-type Scoring
-    = Maybe Side
+
 
 
 playerScoring memory boundary =
