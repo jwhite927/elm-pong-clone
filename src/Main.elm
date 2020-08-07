@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import Debug exposing (toString)
 import Playground exposing (..)
+import String exposing (fromFloat)
 
 
 
@@ -339,10 +339,10 @@ view computer memory =
         |> move memory.ball.x memory.ball.y
     , rectangle white 2 field
         |> move 0 0
-    , words white (toString memory.score.player1score)
+    , words white (fromFloat memory.score.player1score)
         |> scale 4
         |> move (negate rightScoreX) scoreY
-    , words white (toString memory.score.player2score)
+    , words white (fromFloat memory.score.player2score)
         |> scale 4
         |> move rightScoreX scoreY
     ]
