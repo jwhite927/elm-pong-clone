@@ -12,9 +12,11 @@ ballradius : Float
 ballradius =
     10
 
-ballSpeed: Float
+
+ballSpeed : Float
 ballSpeed =
     6
+
 
 rpaddleoffset : Float
 rpaddleoffset =
@@ -57,10 +59,15 @@ type Side
     = Left
     | Right
 
+
+
 -- Scoring helps direct which player scored, if any
+
 
 type Scoring
     = Maybe Side
+
+
 
 -- The ball is square and has the most movement logic
 
@@ -114,9 +121,11 @@ type alias Score =
     , player2score : Float
     }
 
+
 initScore : Score
 initScore =
     Score 0 0
+
 
 
 -- State holds the game memory
@@ -144,9 +153,7 @@ resetState score =
 -- UPDATE
 
 
-
-
-
+playerScoring : State -> Float -> Scoring
 playerScoring memory boundary =
     if memory.ball.edges.left < negate boundary then
         Just Left
@@ -203,11 +210,9 @@ update computer memory =
                 p2y =
                     if memory.ball.vx < 0 then
                         follow memory.paddle2 0 (computer.screen.height / 400)
+
                     else
                         follow memory.paddle2 memory.ball.y (computer.screen.height / 400)
-
-
-
             in
             { memory
                 | paddle1 =
@@ -217,6 +222,8 @@ update computer memory =
                 , ball = moveBall ball bvx bvy
             }
 
+
+boundPaddle : Paddle -> Float -> Float -> Float
 boundPaddle paddle boundary y =
     if paddle.edges.top > boundary then
         boundary - paddleheight / 2
@@ -226,16 +233,18 @@ boundPaddle paddle boundary y =
 
     else
         y
-    
 
+
+follow : Paddle -> Float -> Float -> Float
 follow paddle target vx =
-        if target < paddle.y then
-            paddle.y - vx
-        else if target == paddle.y then
-            paddle.y
-        else
-            paddle.y + vx
-        
+    if target < paddle.y then
+        paddle.y - vx
+
+    else if target == paddle.y then
+        paddle.y
+
+    else
+        paddle.y + vx
 
 
 hittingTorB : Computer -> Ball -> Bool
@@ -297,8 +306,9 @@ hittingPaddle memory side =
 -- VIEW
 
 
+fieldSize : Computer -> Float
 fieldSize computer =
-    (min computer.screen.width computer.screen.height) * 0.8
+    min computer.screen.width computer.screen.height * 0.8
 
 
 view : Computer -> State -> List Shape
@@ -311,10 +321,10 @@ view computer memory =
             computer.screen.height
 
         rightScoreX =
-            (fieldSize computer) / 4
+            fieldSize computer / 4
 
         scoreY =
-            ((fieldSize computer) / 2) - 60
+            (fieldSize computer / 2) - 60
 
         field =
             fieldSize computer
