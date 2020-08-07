@@ -64,8 +64,8 @@ type Side
 -- Scoring helps direct which player scored, if any
 
 
-type Scoring
-    = Maybe Side
+type alias Scoring =
+    Maybe Side
 
 
 
@@ -168,11 +168,13 @@ playerScoring memory boundary =
 update : Computer -> State -> State
 update computer memory =
     case playerScoring memory (fieldSize computer / 2) of
-        Just Left ->
-            resetState (Score (memory.score.player1score + 1) memory.score.player2score)
+        Just side ->
+            case side of
+                Left ->
+                    resetState (Score (memory.score.player1score + 1) memory.score.player2score)
 
-        Just Right ->
-            resetState (Score memory.score.player1score (memory.score.player2score + 1))
+                Right ->
+                    resetState (Score memory.score.player1score (memory.score.player2score + 1))
 
         Nothing ->
             let
