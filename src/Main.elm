@@ -33,7 +33,6 @@ paddlewidth =
     20
 
 
-
 -- TYPES
 -- Rectangular objects have edges, used for collisions
 
@@ -179,7 +178,7 @@ update computer memory =
         Nothing ->
             let
                 p1y =
-                    memory.paddle1.y + (computer.screen.height / 80) * toY computer.keyboard
+                    memory.paddle1.y + (fieldSize computer / 80) * toY computer.keyboard
 
                 bvx =
                     if hittingPaddle memory (whichSide memory) then
@@ -211,7 +210,7 @@ update computer memory =
 
                 p2y =
                     if memory.ball.vx < 0 then
-                        follow memory.paddle2 0 (computer.screen.height / 400)
+                        follow memory.paddle2 0 (computer.screen.height / 600)
 
                     else
                         follow memory.paddle2 memory.ball.y (computer.screen.height / 400)
@@ -310,7 +309,7 @@ hittingPaddle memory side =
 
 fieldSize : Computer -> Float
 fieldSize computer =
-    min computer.screen.width computer.screen.height * 0.8
+    630
 
 
 view : Computer -> State -> List Shape
