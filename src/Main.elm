@@ -33,6 +33,12 @@ paddlewidth =
     20
 
 
+fieldSize : Float
+fieldSize =
+    630
+
+
+
 -- TYPES
 -- Rectangular objects have edges, used for collisions
 
@@ -166,7 +172,7 @@ playerScoring memory boundary =
 
 update : Computer -> State -> State
 update computer memory =
-    case playerScoring memory (fieldSize computer / 2) of
+    case playerScoring memory (fieldSize / 2) of
         Just side ->
             case side of
                 Left ->
@@ -178,7 +184,7 @@ update computer memory =
         Nothing ->
             let
                 p1y =
-                    memory.paddle1.y + (fieldSize computer / 80) * toY computer.keyboard
+                    memory.paddle1.y + (fieldSize / 80) * toY computer.keyboard
 
                 bvx =
                     if hittingPaddle memory (whichSide memory) then
@@ -206,7 +212,7 @@ update computer memory =
                     memory.ball
 
                 boundary =
-                    fieldSize computer / 2
+                    fieldSize / 2
 
                 p2y =
                     if memory.ball.vx < 0 then
@@ -252,7 +258,7 @@ hittingTorB : Computer -> Ball -> Bool
 hittingTorB computer ball =
     let
         boundary =
-            fieldSize computer / 2
+            fieldSize / 2
     in
     ball.edges.top
         > boundary
@@ -307,11 +313,6 @@ hittingPaddle memory side =
 -- VIEW
 
 
-fieldSize : Computer -> Float
-fieldSize computer =
-    630
-
-
 view : Computer -> State -> List Shape
 view computer memory =
     let
@@ -322,13 +323,13 @@ view computer memory =
             computer.screen.height
 
         rightScoreX =
-            fieldSize computer / 4
+            fieldSize / 4
 
         scoreY =
-            (fieldSize computer / 2) - 60
+            (fieldSize / 2) - 60
 
         field =
-            fieldSize computer
+            fieldSize
     in
     [ rectangle (rgb 68 68 68) w h
     , square black field
