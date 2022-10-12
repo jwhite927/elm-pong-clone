@@ -2,7 +2,7 @@
 
 This is a [Pong](https://en.wikipedia.org/wiki/Pong) clone written in Elm
 
-[Try the Game here!](https://animind.space/) (Use the Up and Down arrow keys to control the paddle)
+[Try the Game here!](https://startling-jelly-189d05.netlify.app/) (Use the Up and Down arrow keys to control the paddle)
 
 ![Pong_Clone](./elm-pong-clone-demo.gif)
 
